@@ -19,7 +19,7 @@ Run in separate terminals from ros root workspace
     roslaunch lidar_midi lidar_midi.launch
     rviz -d src/lidar_midi/rviz/lidar_midi.rviz # optional but usefull visualisation
 
-### b) Runing the node with an external scan source (usualy physical lidar)
+### b) Runing the node with an external scan source (usually with physical lidar)
 Make sure you have the lidar setup so it publishes onto /scan topic. Then run in separate terminals
 
     roslaunch lidar_midi lidar_midi.launch
