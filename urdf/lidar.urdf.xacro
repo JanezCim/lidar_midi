@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="lidar">
+
+  <xacro:include filename="$(find lidar_midi)/urdf/hokuyo_lidar.xacro" />
+
+  <link name="base_link"/>
+
+  <xacro:hokuyo_lidar name="laser" connected_to="base_link">
+    <origin xyz="0.0 0.0 0.2" rpy="0 0 0"/>
+  </xacro:hokuyo_lidar>
+
+</robot>

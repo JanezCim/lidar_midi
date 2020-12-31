@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- load the midi configuration -->
+  <rosparam command="load" file="$(find lidar_midi)/config/midi_settings.yaml" />
+
+  <!-- start the laser filter -->
+  <!-- <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="laser_filter">
+    <rosparam command="load" file="$(find lidar_midi)/config/laser_filter_chain.yaml" />
+  </node> -->
+
+  <node name="lidar_midi_node" pkg="lidar_midi" type="lidar_midi_node.py" output="screen">
+    <!-- if these ranges arent set, max and min values from scan message are taken -->
+    <param name="max_lidar_range" value="5.0"/>
+    <param name="min_lidar_range" value="0.2"/>
+  </node>
+  
+
+</launch>

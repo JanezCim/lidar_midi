@@ -1,0 +1,18 @@
+midi_settings:
+# knobby bits
+  - {'midi_id': 16, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 17, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 18, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 19, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 20, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 21, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 22, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 23, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 120, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 121, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 122, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 123, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 124, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 125, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 126, 'min_val': 0, 'max_val': 255}
+  - {'midi_id': 127, 'min_val': 0, 'max_val': 255}

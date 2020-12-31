@@ -1,0 +1,20 @@
+<launch>
+
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="gui" value="true" />
+    <arg name="headless" value="false" />
+    <arg name="paused" value="false" />
+    <arg name="debug" value="false" />
+    <arg name="use_sim_time" value="true" />
+  </include>
+
+  <param  name="robot_description" 
+          command="$(find xacro)/xacro --inorder '$(find lidar_midi)/urdf/lidar.urdf.xacro'"
+  />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+
+  <node name="lidar_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model lidar"/>
+
+</launch>
