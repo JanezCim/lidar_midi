@@ -11,8 +11,10 @@
 
   <node name="lidar_midi_node" pkg="lidar_midi" type="lidar_midi_node.py" output="screen">
     <!-- if these ranges arent set, max and min values from scan message are taken -->
-    <param name="max_lidar_range" value="5.0"/>
+    <param name="max_lidar_range" value="2.0"/>
     <param name="min_lidar_range" value="0.2"/>
+    <!-- if false, max lidar dist means min midi value. If true max lidar dist value means max midi value -->
+    <param name="invert_distance_midi_conversion" value="true"/> 
   </node>
   
 

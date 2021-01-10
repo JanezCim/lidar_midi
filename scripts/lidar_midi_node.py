@@ -10,14 +10,16 @@ from geometry_msgs.msg import Point
 from std_msgs.msg import Int16MultiArray
 import numpy as np
 
-midi_settings_ = None
-laser_frame_id_ = None
-span_vis_pub_ = None
-span_range_vis_pub_ = None
-midi_pub_ = None
-old_midi_values_ = None
-min_lid_rng_ = 0
-max_lid_rng_ = 0
+midi_settings_ = None # holds all the midi settings from param server
+laser_frame_id_ = None #holds laser frame id
+span_vis_pub_ = None # hold publsiher for the visualisation messages (radial lines)
+span_range_vis_pub_ = None # holds publisher for ranges detected visualisation marker
+midi_pub_ = None # holds publisher of "midi" messages
+old_midi_values_ = None #holds old values of the midi messages
+min_lid_rng_ = 0 # hold min lidar distance value
+max_lid_rng_ = 0 # holds max lidar distance value
+invert_distance_midi_conversion_ = True # if false, max lidar dist means min midi value. If true max lidar dist value means max midi value
+
 
 def scan_callback(data):
 	global laser_frame_id_
@@ -90,7 +92,12 @@ def scan_callback(data):
 	# map midi values to ranges
 	midi_values = [0]*nr_of_spans # midi_values list is aligned with midi_settings_ list
 	for i in range(0, nr_of_spans):
-		midi_value = int(map(applied_ranges_in_spans[i], min_lid_rng_, max_lid_rng_, midi_settings_[i]['min_val'], midi_settings_[i]['max_val']))
+		midi_value = int(map(	applied_ranges_in_spans[i],
+													min_lid_rng_, 
+													max_lid_rng_, 
+													midi_settings_[i]['min_val'], 
+													midi_settings_[i]['max_val'], 
+													invert_distance_midi_conversion_))
 		# if mapping has failed write a midi value 0
 		if type(midi_value) != None: 
 			midi_values[i] = midi_value
@@ -108,22 +115,34 @@ def scan_callback(data):
 			old_midi_values_[i] = midi_values[i]
 
 # maps a value that is leftMin<value<leftMax to a value that is rightMin<output<rightMax
-def map(value, leftMin, leftMax, rightMin, rightMax):
+def map(value, leftMin, leftMax, rightMin, rightMax, invert=False):
+	#make sure input value is within bounds
+	if (value<leftMin):
+		rospy.logwarn("Input value that is being mapped is out of bounds. Setting it to min bound")
+		value = leftMin
+	if (value>leftMax):
+		rospy.logwarn("Input value that is being mapped is out of bounds. Setting it to max bound")
+		value = leftMax
+
 	# Figure out how 'wide' each range is
 	leftSpan = leftMax - leftMin
 	rightSpan = rightMax - rightMin
 	
+	# check if the spans are large enough
 	if abs(leftSpan) < 1e-6:
-		rospy.logwarn("left span too small")
+		rospy.logerr("left span in mapping values too small")
 		return None
-	
 	if abs(rightSpan) < 1e-6:
-		rospy.logwarn("left span too small")
+		rospy.logerr("right span in mapping values too small")
 		return None
 
 	# Convert the left range into a 0-1 range (float)
 	valueScaled = float(value - leftMin) / float(leftSpan)
 	
+	# if inversion is enables, invert
+	if invert:
+		valueScaled = 1-valueScaled
+
 	# Convert the 0-1 range into a value in the right range.
 	return rightMin + (valueScaled * rightSpan)
 
@@ -132,7 +151,7 @@ def create_and_pub_line_list_marker(marker_line_list, publisher):
 	marker.header.frame_id = laser_frame_id_
 	marker.header.stamp = rospy.Time.now()
 	marker.ns = "scan_devider_lines"
-	marker.id = 0;
+	marker.id = 0
 	marker.type = marker.LINE_LIST
 	marker.action = marker.ADD
 	for i in range(0, len(marker_line_list)/2):
@@ -161,6 +180,7 @@ def main():
 	global old_midi_values_
 	global min_lid_rng_
 	global max_lid_rng_
+	global invert_distance_midi_conversion_
 
 	rospy.init_node('lidar_midi_node', anonymous=True)
 	rospy.Subscriber("/scan", LaserScan, scan_callback)
@@ -177,6 +197,7 @@ def main():
 
 	min_lid_rng_ = rospy.get_param("~min_lidar_range", 0)
 	max_lid_rng_ = rospy.get_param("~max_lidar_range", 0)
+	invert_distance_midi_conversion_ = rospy.get_param("invert_distance_midi_conversion", True)
 
 	old_midi_values_=[0]*len(midi_settings_) #populate list of lenght len(midi_settings_) with zeroes
 	
