@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # a span: when the lidar scan is devided into len(midi_settings_) parts, those parts are called spans
 
